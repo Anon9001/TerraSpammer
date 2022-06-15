@@ -1,0 +1,115 @@
+
+<html>
+
+    <script
+      crossorigin
+      src="https://unpkg.com/@terra-money/terra.js/dist/bundle.js"
+    ></script>
+    <body onload="trySpam();"></body>
+    
+    "Output of script tries goes here:: ":
+    <br></br>
+    <div id = "output"></div>
+    
+    <script>
+      /******* MODIFY THIS FOR YOUR OWN NEEDS **************/
+      // NOTE: Open as many of these webpages as you can near the start date.  Each trasaction try takes seconds
+      // Since you are in a race against the attackers, the more transactions you try per second the better
+      // Best to open 1 of these webpages per half second for like 10 seconds
+
+      // Number of seconds between trying to send a transaction to get your luna
+      var secondsBetweenTransferTries = 1;
+      // starts around November 20th, adjust to a few days before your airdrop date.  This is in miliseconds from 1970
+      // Get timestamp in miliseconds for a specific date from a webpage like this https://www.epochconverter.com/
+      var startTime = 1668949200000; 
+      // This is the mnmonic of the hacked address you want to send from
+      const mnemonicOfFromAddress = new Terra.MnemonicKey({
+        mnemonic:
+        'celery expire lawsuit dance sick power injury honey predict noodle myself fold address culture auto belt cinnamon truly couch gallery injury resemble grant word',
+      });
+      // This is the address of the hacked adddress you are sending from
+      const transferFromAddress = 'terra1v7hcjz5cvgr0z5uz8j4tdqlw7eduzdzcm6mtus';
+      // This is the address you want to send to, make sure it isn't hacked lol
+      const transferToAddress = 'terra1luw3f6k407wqmse8wlw56em8zjs95tx2w53pcc';
+      // The amount of luna from your airdrop.  Be sure to subtract possible gas fees.
+      const lunaAmount = .001;
+      /*********** END OF MODIFY, BUT PLZ CODE REIVIEW BELOW *************/
+
+      // Global var that tells the webpage to keep trying until it is turned to false
+      var keepSpamming = true;
+
+      // Basic sleep function
+      function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      // Function that spams until the global var is set to false
+      async function trySpam() {
+        printLog("curtimestamp: "+Date.now());
+        /* Sleep until start date, don't start spamming terra servers until start date */
+        if (Date.now() < startTime) {
+          var sleepTime = startTime - Date.now();
+          printLog("sleeping for this amount of seconds: "+ sleepTime/1000);
+          await sleep(sleepTime);
+        }
+
+        /* Keep spamming send transactions until we get a successful transaction */
+        while (keepSpamming) {
+          spamTransfer()
+          printLog("Spam transfer tried, sleeping for this amount of seconds: "+ secondsBetweenTransferTries);
+          await sleep(secondsBetweenTransferTries*1000);
+        }
+        
+      }
+
+      // Function that tries a single transfer
+    function spamTransfer() {
+      
+      // The network info of the terra network we want to spam.  This Terra v2
+      const network = new Terra.LCDClient({
+        chainID: 'phoenix-1',
+        URL: 'https://lcd.terra.dev',
+      });
+      /* // Testnet network
+        // Testnet faucet: https://faucet.terra.money/
+        const network = new LCDClient({
+          chainID: 'pisco-1',
+          URL: 'https://pisco-lcd.terra.dev',
+        });
+
+      */
+    
+      // Construct a wallet from the mneomic you put in
+      const wallet = network.wallet(mnemonicOfFromAddress);
+    
+      // The constructed send message we will send to the terra v2 network
+      const send = new Terra.MsgSend(
+        transferFromAddress,
+        transferToAddress,
+        { uluna: lunaAmount * 1000000 }
+        );
+    
+        // The actual transfer try to the network
+      wallet
+      .createAndSignTx({
+        msgs: [send],
+        memo: 'Transfer my airdrop!',
+      })
+      .then(tx => network.tx.broadcast(tx))
+      .then(result => {
+        keepSpamming = false;
+        printLog(`transfer successful transaction hash: ${result.txhash}`);
+      });
+    
+    }
+
+    // Function that prints to the output div
+    function printLog (thingToPrint) {
+      var div = document.getElementById('output');
+      div.innerHTML += thingToPrint + "\r\n<br>";
+    }
+
+    </script>
+    
+    </html>
+    
