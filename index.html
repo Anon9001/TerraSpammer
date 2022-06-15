@@ -68,16 +68,16 @@
       // The network info of the terra network we want to spam.  This Terra v2
       const network = new Terra.LCDClient({
         chainID: 'phoenix-1',
-        URL: 'https://lcd.terra.dev',
+        URL: 'https://phoenix-lcd.terra.dev',
       });
-      /* // Testnet network
+       // Testnet network
         // Testnet faucet: https://faucet.terra.money/
-        const network = new LCDClient({
-          chainID: 'pisco-1',
-          URL: 'https://pisco-lcd.terra.dev',
-        });
+        // const network = new Terra.LCDClient({
+        //   chainID: 'pisco-1',
+        //   URL: 'https://pisco-lcd.terra.dev',
+        // });
 
-      */
+      
     
       // Construct a wallet from the mneomic you put in
       const wallet = network.wallet(mnemonicOfFromAddress);
