@@ -1,3 +1,5 @@
+For this bot to work, your computer needs to be up (not sleeping) when running this / spamming is occuring.  I suggest turning off sleep mode on your PC and running this a few days before airdrop until you get your airdrop.
+
 # TerraSpammer
 For people who got hacked and want to run this to transfer their luna right after airdrop
 
